@@ -2,7 +2,7 @@
   "private": true,
   "scripts": {
     "dev": "run-p -sr shopify:dev watch",
-    "shopify:dev": "shopify theme dev",
+    "shopify:dev": "shopify theme dev --store=https://mastogiovanni-challenge.myshopify.com/",
     "build": "vite build --minify",
     "watch": "vite build --watch"
   },
