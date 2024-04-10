@@ -1,0 +1,113 @@
+<h1>Tabs</h1>
+
+{% schema %}
+  {
+    "name": "Main Product Tabs",
+    "class": "product-tabs-wrapper",
+    "settings": [
+      {
+        "type": "text",
+        "id": "section_title",
+        "label": "Section Title"
+      }
+    ],
+    "blocks": [
+      {
+        "name": "Product Description",
+        "type": "product_description",
+        "settings": [
+          {
+            "type": "text",
+            "id": "title",
+            "label": "Tab Title",
+            "default": "Product Description",
+            "info": "Content will be populated from product description. If description is empty, this tab won't be rendered."
+          }
+        ]
+      },
+      {
+        "name": "Key Features",
+        "type": "key_features",
+        "settings": [
+          {
+            "type": "text",
+            "id": "title",
+            "label": "Tab Title",
+            "default": "Key Features",
+            "info": "Content will be populated from product metafield. If metafield is empty, this tab won't be rendered."
+          }
+        ]
+      },
+      {
+        "name": "Shipping info",
+        "type": "shipping_info",
+        "settings": [
+          {
+            "type": "text",
+            "id": "title",
+            "label": "Tab Title",
+            "default": "Shipping info"
+          },
+          {
+            "type": "richtext",
+            "id": "content",
+            "label": "Content"
+          }
+        ]
+      },
+      {
+        "name": "Items included in Package",
+        "type": "items_included",
+        "settings": [
+          {
+            "type": "text",
+            "id": "title",
+            "label": "Tab Title",
+            "default": "Items included in Package"
+          },
+          {
+            "type": "richtext",
+            "id": "empty_text_message",
+            "label": "\"Empty\" Text Message",
+            "default": "<p>There's nothing here</p>"
+          },
+          {
+            "type": "text",
+            "id": "fetch_button_label",
+            "label": "Fetch Button Label",
+            "default": "Get Data Now"
+          },
+          {
+            "type": "range",
+            "id": "number_of_cards",
+            "label": "Number of Cards",
+            "min": 3,
+            "max": 10,
+            "step": 1,
+            "default": 10
+          }
+        ]
+      }
+    ],
+    "presets": [
+      {
+      "name": "Main Product Tabs",
+      "blocks": [
+        {
+          "type": "product_description"
+        },
+        {
+          "type": "key_features"
+        },
+        {
+          "type": "shipping_info"
+        },
+        {
+          "type": "items_included"
+        }
+      ]
+    
+      }
+    ]
+  }
+{% endschema %}
