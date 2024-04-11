@@ -1,5 +1,6 @@
 <script src="{{ 'item-card.js' | asset_url }}" defer></script>
 <script src="{{ 'cards-renderer.js' | asset_url }}" defer></script> 
+<script src="{{ 'on-tab-click-handler.js' | asset_url }}" defer></script> 
 
 <style>
   #shopify-section-{{section.id}} ul {
@@ -10,11 +11,20 @@
     width: 200px;
     max-width: 100%;
   }
+
+  #shopify-section-{{section.id}} .tab-button[aria-selected="true"],
+  #shopify-section-{{section.id}} .tab-button[aria-selected="true"]:hover {
+    color: #000;
+    border-color: #000;
+  }
+
 </style>
 
 {% liquid
-  assign tabs_to_render = ""
 
+  assign tabs_to_render = ""  
+
+  # Only blocks which meet the following criteria will be rendered
   for block in section.blocks
 
     if block.settings.title == blank 
@@ -58,7 +68,7 @@
         {%- for block in section.blocks -%}
           {%- if tabs_to_render contains block.id -%}
             <div class="me-2">
-              <button class="inline-block p-4 border-b-2 border-transparent {% if is_first_item %}text-black border-black hover:text-black hover-border-black {% else %}hover:text-gray-600 hover:border-gray-300 {% endif %}" role="tab" aria-selected="{{is_first_item}}" id="tab-{{ block.id }}" aria-labelledby="{{ block.settings.title }}">
+              <button class="tab-button inline-block p-4 border-b-2 hover:text-gray-600 hover:border-gray-300  border-transparent" role="tab" aria-selected="{{is_first_item}}" id="tab-{{ block.id }}" aria-labelledby="{{ block.settings.title }}">
                 {{ block.settings.title }}
               </button>
             </div>
@@ -68,12 +78,13 @@
       </div>
     </div>
 
+    {%- assign is_first_item = true -%}
     {%- for block in section.blocks -%}
       {%- unless tabs_to_render contains block.id -%}
         {%- continue -%}
       {%- endunless -%}
 
-      <div class="border-gray-200 border p-4 -mt-px" role="tabpanel" aria-labelledby="tab-{{ block.id }}" id="panel-{{ block.id  }}">
+      <div class="tab-panel border-gray-200 border p-4 -mt-px" role="tabpanel" aria-labelledby="tab-{{ block.id }}" id="panel-{{ block.id }}" {% unless is_first_item %}hidden{% endunless %}>
       
         {% case block.type %}
           {% when "product_description" %}
@@ -94,6 +105,7 @@
             </div>
 
             <script>
+              // Fetch and render items from API on click
               window.addEventListener('DOMContentLoaded', () => {
                 const cardsRenderer = new CardsRenderer(document.querySelector("#panel-{{ block.id }} .items-container"), {{ block.settings.number_of_cards }})
                 document.querySelector("#panel-{{ block.id }} .fetch-button").addEventListener('click', () => cardsRenderer.renderCards()) 
@@ -101,9 +113,23 @@
             </script>
         {% endcase %}
       </div>
+
+      {%- assign is_first_item = false -%}
     {%- endfor -%}
   </div>
 </div>
+
+<script>
+  // Tab switching functionality
+  window.addEventListener('DOMContentLoaded', () => {
+    const parentElement = document.getElementById("shopify-section-{{section.id}}")
+    const tabButtons = parentElement.querySelectorAll('[role="tab"]')
+
+    tabButtons.forEach(button => {
+      button.addEventListener('click', e => window.onTabClickHandler(e, parentElement));
+    })
+  })
+</script>
 
 {% schema %}
   {
