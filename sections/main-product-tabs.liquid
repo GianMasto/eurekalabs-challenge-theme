@@ -1,13 +1,122 @@
-<h1>Tabs</h1>
+<script src="{{ 'item-card.js' | asset_url }}" defer></script>
+<script src="{{ 'cards-renderer.js' | asset_url }}" defer></script> 
+
+<style>
+  #shopify-section-{{section.id}} ul {
+    list-style: disc;
+    padding-left: 2rem;
+  }
+  #shopify-section-{{section.id}} item-card {
+    width: 200px;
+    max-width: 100%;
+  }
+</style>
+
+{% liquid
+  assign tabs_to_render = ""
+
+  for block in section.blocks
+
+    if block.settings.title == blank 
+      continue 
+    endif
+
+    case block.type
+      when "product_description"
+        if product.description == blank
+          continue
+        endif
+
+      when "key_features"
+        if product.metafields.info.key_features == blank
+          continue
+        endif
+      
+      when "shipping_info"
+        if block.settings.content == blank
+          continue
+        endif
+    endcase
+
+    assign tabs_to_render = tabs_to_render | append: block.id | append: ','
+
+  endfor
+
+  assign tabs_to_render = tabs_to_render | remove_last: ',' | split: ','
+
+%}
+
+<div class="tabs page-width isolate scroll-trigger animate--slide-in">
+  {%- if section.settings.title != blank -%}
+    <h2 class="h2 my-4">{{section.settings.title}}</h2>
+  {%- endif -%}
+
+  <div class="tabs-container">
+    <div class="text-center">
+      <div class="flex flex-wrap" role="tablist" aria-label="Product Info">
+        {%- assign is_first_item = true -%}
+        {%- for block in section.blocks -%}
+          {%- if tabs_to_render contains block.id -%}
+            <div class="me-2">
+              <button class="inline-block p-4 border-b-2 border-transparent {% if is_first_item %}text-black border-black hover:text-black hover-border-black {% else %}hover:text-gray-600 hover:border-gray-300 {% endif %}" role="tab" aria-selected="{{is_first_item}}" id="tab-{{ block.id }}" aria-labelledby="{{ block.settings.title }}">
+                {{ block.settings.title }}
+              </button>
+            </div>
+            {%- assign is_first_item = false -%}
+          {%- endif -%}
+        {%- endfor -%}
+      </div>
+    </div>
+
+    {%- for block in section.blocks -%}
+      {%- unless tabs_to_render contains block.id -%}
+        {%- continue -%}
+      {%- endunless -%}
+
+      <div class="border-gray-200 border p-4 -mt-px" role="tabpanel" aria-labelledby="tab-{{ block.id }}" id="panel-{{ block.id  }}">
+      
+        {% case block.type %}
+          {% when "product_description" %}
+            <p>{{product.description}}</p>
+          
+          {% when "key_features" %}
+            <p>{{product.metafields.info.key_features | metafield_tag }}</p>
+
+          {% when "shipping_info" %}
+            <p>{{block.settings.content}}</p>
+
+          {% when "items_included" %}
+            <div class="items-container flex flex-wrap gap-4">
+              {{block.settings.empty_text_message}}
+              <div class="min-w-full">
+                <button class="fetch-button inline-block p-3 border transition-all border-black hover:text-white hover:bg-black">{{block.settings.fetch_button_label}}</button>
+              </div>
+            </div>
+
+            <script>
+              window.addEventListener('DOMContentLoaded', () => {
+                const cardsRenderer = new CardsRenderer(document.querySelector("#panel-{{ block.id }} .items-container"), {{ block.settings.number_of_cards }})
+                document.querySelector("#panel-{{ block.id }} .fetch-button").addEventListener('click', () => cardsRenderer.renderCards()) 
+              })
+            </script>
+        {% endcase %}
+      </div>
+    {%- endfor -%}
+  </div>
+</div>
 
 {% schema %}
   {
     "name": "Main Product Tabs",
     "class": "product-tabs-wrapper",
+    "enabled_on": {
+      "templates": ["product"]
+    },
+    "tag": "section",
     "settings": [
       {
         "type": "text",
-        "id": "section_title",
+        "id": "title",
         "label": "Section Title"
       }
     ],
