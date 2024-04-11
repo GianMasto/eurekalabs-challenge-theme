@@ -142,7 +142,7 @@
           "type": "shipping_info",
           "settings": {
             "title": "Shipping info",
-            "content": "<p>This is the shopping info<\/p>"
+            "content": "<p>This is the shipping info<\/p>"
           }
         },
         "items_included_gXmxUV": {
