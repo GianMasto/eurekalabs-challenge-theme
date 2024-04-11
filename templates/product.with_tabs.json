@@ -142,7 +142,7 @@
           "type": "shipping_info",
           "settings": {
             "title": "Shipping info",
-            "content": "<p>This is the shipping info<\/p>"
+            "content": "<p><\/p>{{ product.metafields.info.shipping.value.shipping_info | metafield_tag }}"
           }
         },
         "items_included_gXmxUV": {
