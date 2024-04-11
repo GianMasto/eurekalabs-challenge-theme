@@ -151,7 +151,7 @@
             "title": "Items included in Package",
             "empty_text_message": "<p>There's nothing here<\/p>",
             "fetch_button_label": "Get Data Now",
-            "number_of_cards": 10
+            "number_of_cards": 3
           }
         }
       },
